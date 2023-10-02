@@ -1,1 +1,1 @@
-# Snowflake-Data-Warehousing-Badges-
+# Snowflake-Data-Warehousing-Projects-
