@@ -1,0 +1,239 @@
+select current_region();
+select current_account();
+create or replace util.db;
+use database util.db;
+use role accountadmin;
+
+create or replace api integration dora_api_integration
+api_provider = aws_api_gateway
+api_aws_role_arn = 'arn:aws:iam::321463406630:role/snowflakeLearnerAssumedRole'
+enabled = true
+api_allowed_prefixes = ('https://awy6hshxy4.execute-api.us-west-2.amazonaws.com/dev/edu_dora');
+
+create or replace external function util_db.public.grader(
+      step varchar
+    , passed boolean
+    , actual integer
+    , expected integer
+    , description varchar)
+returns variant
+api_integration = dora_api_integration 
+context_headers = (current_timestamp,current_account, current_statement) 
+as 'https://awy6hshxy4.execute-api.us-west-2.amazonaws.com/dev/edu_dora/grader'
+; 
+
+
+
+select grader(step, (actual = expected), actual, expected, description) as graded_results from 
+  ( SELECT 
+  'DORA_IS_WORKING' as step
+ ,(select 223) as actual
+ , 223 as expected
+ ,'Dora is working!' as description
+); 
+
+
+select GRADER(step, (actual = expected), actual, expected, description) as graded_results from (
+  SELECT 'DABW01' as step
+ ,( select count(*) 
+   from PC_RIVERY_DB.INFORMATION_SCHEMA.SCHEMATA 
+   where schema_name ='PUBLIC') as actual
+ , 1 as expected
+ ,'Rivery is set up' as description
+);
+
+create or replace table Healthy_food_interest_from_result_ingest(
+TIMESTAMP DATE 
+
+);
+
+
+select * from HEALTHY_FOOD_INTEREST_FORM_RESULTS_INGEST;
+
+
+select GRADER(step, (actual = expected), actual, expected, description) as graded_results from (
+ SELECT 'DABW02' as step
+ ,( select count(*) 
+   from PC_RIVERY_DB.INFORMATION_SCHEMA.TABLES 
+   where ((table_name ilike '%FORM%') 
+   and (table_name ilike '%RESULT%'))) as actual
+ , 1 as expected
+ ,'Rivery form results table is set up' as description
+);
+
+
+
+create or replace external function util_db.public.greeting(
+      email varchar
+    , firstname varchar
+    , middlename varchar
+    , lastname varchar)
+returns variant
+api_integration = dora_api_integration
+context_headers = (current_timestamp,current_account, current_statement)
+as 'https://awy6hshxy4.execute-api.us-west-2.amazonaws.com/dev/edu_dora/greeting'
+;
+
+
+select PC_RIVERY_DB.public.greeting('mohdjaved@protonmail.com', 'Mohd', '', 'Javed');
+
+SELECT * FROM FRUITYVICE;
+where CASE 
+  WHEN (FAMILY = 'Cucurbitaceae' AND name = 'Watemelon') THEN 1
+  WHEN (FAMILY = 'Musaceae' AND name='Banana') THEN 1
+  WHEN (FAMILY = 'Rosaceae' AND name = 'Orange') THEN 1
+  WHEN (FAMILY = 'Rutaceae' AND name='Raspberry') THEN 1
+   ELSE 0;
+
+
+FAMILY in ('Musaceae','Rosaceae','Cucurbitaceae','Rutaceae') and name in ('Watemelon','Banana','Orange','Raspberry');
+
+
+;
+select GRADER(step, (actual = expected), actual, expected, description) as graded_results from (
+  SELECT 'DABW03' as step
+ ,( select sum(round(nutritions_sugar)) 
+   from PC_RIVERY_DB.PUBLIC.FRUITYVICE) as actual
+ , 35 as expected
+ ,'Fruityvice table is perfectly loaded' as description
+);
+drop table FRUITYVICE1;
+create table FRUITYVICE as
+select avg(NUTRITIONS_SUGAR) as NUTRITIONS_SUGAR,name, family
+from FRUITYVICE
+where ((FAMILY = 'Cucurbitaceae' AND name ='Watermelon')OR
+  (FAMILY = 'Musaceae' AND name='Banana')  OR
+  (FAMILY = 'Rosaceae' AND name = 'Raspberry')  OR
+  (FAMILY = 'Rutaceae' AND name='Orange') )
+group by name, family;
+Select * from fruityvice1;
+drop table fruityvice;
+
+create table FRUITYVICE as
+select *
+from FRUITYVICE1;
+
+select GRADER(step, (actual = expected), actual, expected, description) as graded_results from (
+  SELECT 'DABW03' as step
+ ,( select sum(round(nutritions_sugar)) 
+   from PC_RIVERY_DB.PUBLIC.FRUITYVICE) as actual
+ , 35 as expected
+ ,'Fruityvice table is perfectly loaded' as description
+);
+
+
+create table sessions_copy as
+select *
+from sessions;
+
+select * from food;
+
+create database util_db;
+
+drop table food;
+set var1 =4;
+set var2 =5;
+set var3 =7;
+ select $var1+$var2+$var3;
+
+ create function sum_mystery_bag_vars (var1 number, var2 number, var3 number)
+ returns number as 'select var1+var2+var3';
+
+select sum_mystery_bag_vars(12,36,204);
+
+set eeny =4;
+set meeny =67.2;
+set miney_mo =-39;
+
+select sum_mystery_bag_vars($eeny,$meeny,$miney_mo);
+ 
+set this = -10.5;
+set that = 2;
+set the_other =  1000;
+select sum_mystery_bag_vars($this,$that,$the_other);
+-- DO NOT EDIT ANYTHING BELOW THIS LINE
+select GRADER(step, (actual = expected), actual, expected, description) as graded_results from (
+  SELECT 'DABW04' as step
+ ,( select util_db.public.sum_mystery_bag_vars($this,$that,$the_other)) as actual
+ , 991.5 as expected
+ ,'Mystery Bag Function Output' as description
+);
+
+
+
+set text='bUt mOm i wAsHeD tHe dIsHes yEsTeRdAy';
+
+create function NEUTRALIZE_WHINING (text)
+ returns initcap as 'result';
+CREATE OR REPLACE FUNCTION NEUTRALIZE_WHINING(text STRING)
+  RETURNS STRING
+  AS
+  $$
+    initcap(text)
+  $$
+  ;
+  
+ NEUTRALIZE_WHINING($text);
+
+
+ 
+select GRADER(step, (actual = expected), actual, expected, description) as graded_results from (
+ SELECT 'DABW05' as step
+ ,( select hash(neutralize_whining('bUt mOm i wAsHeD tHe dIsHes yEsTeRdAy'))) as actual
+ , -4759027801154767056 as expected
+ ,'WHINGE UDF Works' as description
+);
+
+
+SHOW STAGES IN ACCOUNT;
+
+
+create database DEMO_DB;
+list @my_internal_named_stage;
+
+select $1 from @my_internal_named_stage/my_file.txt.gz;
+select GRADER(step, (actual = expected), actual, expected, description) as graded_results from (
+  SELECT 'DABW06' as step
+ ,( select count(distinct METADATA$FILENAME) 
+   from @util_db.public.my_internal_named_stage) as actual
+ , 3 as expected
+ ,'I PUT 3 files!' as description
+);
+
+
+
+
+create or replace table FRUIT_LOAD_LIST
+(
+name varchar(50)
+);
+
+use role pc_rivery_role;
+use warehouse pc_rivery_wh;
+
+drop table FRUIT_LOAD_LIST;
+create or replace TABLE PC_RIVERY_DB.PUBLIC.FRUIT_LOAD_LIST (
+	FRUIT_NAME VARCHAR(25)
+);
+select * from FRUIT_LOAD_LIST;
+insert into PC_RIVERY_DB.PUBLIC.FRUIT_LOAD_LIST
+values ('banana')
+, ('cherry')
+, ('strawberry')
+, ('pineapple')
+, ('apple')
+, ('mango')
+, ('coconut')
+, ('plum')
+, ('avocado')
+, ('starfruit');
+
+
+select GRADER(step, (actual = expected), actual, expected, description) as graded_results from (
+   SELECT 'DABW07' as step 
+   ,( select count(*) 
+     from pc_rivery_db.public.fruit_load_list 
+     where fruit_name in ('jackfruit','papaya', 'kiwi', 'test', 'from streamlit', 'guava')) as actual 
+   , 4 as expected 
+   ,'Followed challenge lab directions' as description
+); 
